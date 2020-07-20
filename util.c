@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+
+
 void getArr(int arr[], int len){
   for(int i=0;i<len;i++){
     arr[i] = rand()%100;
