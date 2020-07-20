@@ -1,11 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
-
-
+#include<time.h>
 
 void getArr(int arr[], int len){
+  srand(time(NULL));
   for(int i=0;i<len;i++){
-    arr[i] = rand()%100;
+    arr[i] = rand()%10;
   }
 }
 
