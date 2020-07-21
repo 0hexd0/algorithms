@@ -11,7 +11,7 @@ void initNode(Node* pnode, int data);
 
 void insert(Node** pptree, int data);
 
-void delete(Node* pnode, int data);
+void delete(Node** ptree, int data);
 
 Node* find(Node* ptree, int data);
 
@@ -59,18 +59,86 @@ void insert(Node** pptree, int data){
   } 
 }
 
-void delete(Node* pnode, int data){
-  
+void delete(Node** pptree, int data){
+  Node* ppar = NULL;
+  Node* p = *pptree;
+  while(p != NULL){
+    if(p -> data == data){
+      if(p -> pl == NULL && p -> pr == NULL){
+        // has no child
+        if(ppar == NULL){
+          // root
+        } else {
+          // leaf
+          if(ppar -> pl == p) {
+            ppar -> pl = NULL;
+          } else {
+            ppar -> pr = NULL;
+          }
+        }
+      } else if (p -> pl == NULL ||  p -> pr == NULL) {
+        Node* pn = p -> pl != NULL ? p -> pl : p -> pr;
+        // has one child
+        if(ppar == NULL){
+          // root
+          *pptree = pn;
+        } else { 
+          if(ppar -> pl == p) {
+            ppar -> pl = pn;
+          } else {
+            ppar -> pr = pn;
+          }
+        }
+      } else {
+        // has double children, find the minimum node on the right tree
+        Node* min = p -> pr;
+        // parent node of min
+        Node* minp = p;
+        while(min -> pl != NULL){
+          minp = min;
+          min = min -> pl;
+        }
+        minp -> pl = NULL;
+        min -> pr = minp;
+        min -> pl = p -> pl;
+        if(ppar == NULL) {
+          *pptree = min;
+        } else {
+          if(ppar -> pl == p) { 
+            ppar -> pl = min;
+          } else { 
+            ppar -> pr = min;
+          }
+        }
+      } 
+      free(p);
+    } else if(p -> data < data){
+      ppar = p;
+      p = p -> pr;
+    } else {
+      ppar = p;
+      p = p -> pl;
+    }
+  }
+  // not find, do nothing
 }
 
 void main(){
   Node* ptree = NULL;
   insert(&ptree, 10);
+  insert(&ptree, 12);
   insert(&ptree, 9);
   insert(&ptree, 8);
-  printf("node.data:%d\n", ptree -> data);
-  printf("node.l:%p\n", ptree -> pl);
-  printf("node.r:%p\n", ptree -> pr);
-  Node* finded = find(ptree, 9);
-  printf("finded:%p\n", finded);
+  insert(&ptree, 99);
+  insert(&ptree, 7);
+  Node* finded9 = find(ptree, 9);
+  printf("finded 9's address:%p\n", finded9);
+  Node* finded10 = find(ptree, 10);
+  printf("finded 10's address:%p\n", finded10);
+  delete(&ptree, 9);
+  printf("delete 9\n");
+  finded9 = find(ptree, 9);
+  printf("finded 9's address:%p\n", finded9);
+  finded10 = find(ptree, 10);
+  printf("finded 10's address:%p\n", finded10);
 }
